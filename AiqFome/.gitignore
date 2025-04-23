@@ -1,0 +1,3 @@
+#Ignore file cache django
+*.pyc
+*/migrations/*
