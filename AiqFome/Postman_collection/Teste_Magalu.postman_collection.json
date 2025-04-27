@@ -1,0 +1,547 @@
+{
+	"info": {
+		"_postman_id": "9e9c3ccc-dacc-4ed3-b00a-4416daed5ec7",
+		"name": "Teste_Magalu",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32923521"
+	},
+	"item": [
+		{
+			"name": "Login API",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"fergamorim\",\n    \"password\": \"MinhaSenha123$\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/register/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"register",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"user\",\n    \"password\": \"senhasegura123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/token/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"token",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NTUzNjIwOCwiaWF0IjoxNzQ1NDQ5ODA4LCJqdGkiOiI2NzM0ZDI5ZmE5MGY0MDMwOTk4NjI4NjRiYWNiNmJkOSIsInVzZXJfaWQiOjN9.iZ0uDIOcvsmhih7_mwR7H_yml6PeA3sWrK8j5h4cIgg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/token/refresh/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"token",
+								"refresh",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cliente",
+			"item": [
+				{
+					"name": "Cliente Especifico",
+					"item": [
+						{
+							"name": "Deletar Cliente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY2NzA3LCJpYXQiOjE3NDU3NjY0MDcsImp0aSI6IjU2ZGI3YjIwNTllYjQ0NjA5NTYzNWQwNzYzYTQ2NGI0IiwidXNlcl9pZCI6Mn0.1ejXeFp-KZtCTeVuLkFV2o5leG4zvXRWdOlyyGHZDRs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8000/api/customers/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"customers",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Obter Favoritos de Cliente",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY4NTQ3LCJpYXQiOjE3NDU3NjgyNDcsImp0aSI6ImYzYjdhMTNhYzUyNDQ5NzNhNTQ5NmU0YWMxOTNmZTBhIiwidXNlcl9pZCI6Mn0.l36POVFtl2rJ48r-9UCXChxHKNAwnGuaC3palhs_UPY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/customers/2/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Novo Cliente",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY4MzMwLCJpYXQiOjE3NDU3NjgwMzAsImp0aSI6IjBhMTE3MzJiMGU2ZjRmZDNiNzRlZmUxYTViZTU5YjhhIiwidXNlcl9pZCI6Mn0.-aSoqdvt4KJGw7pCVXUW5sK3eup7hvzWTDWFatxZEXU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fernando\",\n    \"email\": \"fernando.amorim@magalu.com.br\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/customers/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter Clientes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY4MzMwLCJpYXQiOjE3NDU3NjgwMzAsImp0aSI6IjBhMTE3MzJiMGU2ZjRmZDNiNzRlZmUxYTViZTU5YjhhIiwidXNlcl9pZCI6Mn0.-aSoqdvt4KJGw7pCVXUW5sK3eup7hvzWTDWFatxZEXU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/customers/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Produtos",
+			"item": [
+				{
+					"name": "Produto Especifico",
+					"item": [
+						{
+							"name": "Obter produto favorito especifico de cliente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY3NTgzLCJpYXQiOjE3NDU3NjcyODMsImp0aSI6IjQ3Zjg0NTRlMGEwZDRjYzJhMmM4YjM4YjRiOWJhN2Y2IiwidXNlcl9pZCI6Mn0.WMi8Q6eFWk1rnju9_XIBxjNF_w_ZAC490kgyjRVdR4I",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8000/api/customers/2/favorites/1/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"customers",
+										"2",
+										"favorites",
+										"1",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remover favorito em cliente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY3Mjc2LCJpYXQiOjE3NDU3NjY5NzYsImp0aSI6ImFiYmJlZjdhMmJhYTQ2NzM4MzQwOGU4ODdjMWM0ZWY0IiwidXNlcl9pZCI6Mn0.jM-B8LML3g0sEsat1iXaAKgN1brMGF7f4Yg7sc-KLXc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8000/api/customers/2/favorites/1/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"customers",
+										"2",
+										"favorites",
+										"1",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita produto favorito especifico de cliente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY3Mjc2LCJpYXQiOjE3NDU3NjY5NzYsImp0aSI6ImFiYmJlZjdhMmJhYTQ2NzM4MzQwOGU4ODdjMWM0ZWY0IiwidXNlcl9pZCI6Mn0.jM-B8LML3g0sEsat1iXaAKgN1brMGF7f4Yg7sc-KLXc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"product_id\": 2,\n  \"customer\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/customers/2/favorites/1/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"customers",
+										"2",
+										"favorites",
+										"1",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita parcialmente  produto favorito especifico de cliente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY3Mjc2LCJpYXQiOjE3NDU3NjY5NzYsImp0aSI6ImFiYmJlZjdhMmJhYTQ2NzM4MzQwOGU4ODdjMWM0ZWY0IiwidXNlcl9pZCI6Mn0.jM-B8LML3g0sEsat1iXaAKgN1brMGF7f4Yg7sc-KLXc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"product_id\": 2,\n  \"customer\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/customers/2/favorites/1/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"customers",
+										"2",
+										"favorites",
+										"1",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Importar Produtos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY0MzQxLCJpYXQiOjE3NDU3NjQwNDEsImp0aSI6ImQ2YTlkZjc2YTFkNTQzYjg4ZDEyOTE1YjcwYmE5NWQ4IiwidXNlcl9pZCI6Mn0.FZVHWPhlOtmr7o6G2rAGuPoOM0ZtCgH9j1cSCKECEcg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/import-products/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"import-products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Adicionar favorito em cliente",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY3Mjc2LCJpYXQiOjE3NDU3NjY5NzYsImp0aSI6ImFiYmJlZjdhMmJhYTQ2NzM4MzQwOGU4ODdjMWM0ZWY0IiwidXNlcl9pZCI6Mn0.jM-B8LML3g0sEsat1iXaAKgN1brMGF7f4Yg7sc-KLXc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_id\": 1,\n  \"customer\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/customers/2/favorites/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								"2",
+								"favorites",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter todos favoritos de um cliente",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1NzY3Mjc2LCJpYXQiOjE3NDU3NjY5NzYsImp0aSI6ImFiYmJlZjdhMmJhYTQ2NzM4MzQwOGU4ODdjMWM0ZWY0IiwidXNlcl9pZCI6Mn0.jM-B8LML3g0sEsat1iXaAKgN1brMGF7f4Yg7sc-KLXc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/customers/2/favorites",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								"2",
+								"favorites"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product List LuizaLabs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://challenge-api.luizalabs.com/api/product/?page=1",
+					"protocol": "http",
+					"host": [
+						"challenge-api",
+						"luizalabs",
+						"com"
+					],
+					"path": [
+						"api",
+						"product",
+						""
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

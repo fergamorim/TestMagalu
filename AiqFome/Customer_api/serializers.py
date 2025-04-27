@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Customer, FavoriteProduct
+from .models import Customer, Product, FavoriteProduct
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -13,11 +13,16 @@ class CustomerSerializer(serializers.ModelSerializer):
             'email': {'validators': []},
         }
 
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = '__all__'
+
 class FavoriteProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteProduct
-        fields = ['id', 'product_id', 'title', 'customer', 'price', 'review', 'date_addition']
-        read_only_fields = ['title', 'title', 'price', 'review']
+        fields = ['customer', 'product_id','date_addition']
+        read_only_fields = ['customer', 'product_id', 'date_addition']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

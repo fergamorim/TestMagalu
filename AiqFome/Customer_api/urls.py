@@ -3,6 +3,7 @@ from .views import (
     RegisterView,
     CustomerListCreateView,
     CustomerDetailView,
+    ImportProductsView,
     FavoriteProductListView,
     FavoriteProductDetailView,
 )
@@ -17,8 +18,11 @@ urlpatterns = [
     # Customers
     path('customers/', CustomerListCreateView.as_view(), name='Customer-list-create'),
     path('customers/<int:id>/', CustomerDetailView.as_view(), name='Customer-detail'),
+
+    #Importar produtos
+    path('import-products/', ImportProductsView.as_view(), name='import-products'),
     
     # Produtos Favoritos
     path('customers/<int:Customer_id>/favorites/', FavoriteProductListView.as_view(), name='favorite-list'),
-    path('customers/<int:Customer_id>/favorites/<int:produto_id>/', FavoriteProductDetailView.as_view(), name='favorite-detail'),
+    path('customers/<int:customer_id>/favorites/<int:product_id>/', FavoriteProductDetailView.as_view(), name='favorite-detail'),
 ]
