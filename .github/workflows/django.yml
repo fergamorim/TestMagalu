@@ -27,4 +27,4 @@ jobs:
         pip install -r AiqFome/requirements.txt
     - name: Run Tests
       run: |
-        python manage.py test
+        python AiqFome/manage.py test
