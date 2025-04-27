@@ -52,10 +52,12 @@ python3 manage.py runserver
 # Documentação e Colletion postman
 
 ## Swagger
+
 Para acessar a documentação Swagger da API, basta abrir em seu navegador a seguinte URL apartir do projeto iniciado.
 http://localhost:8000/docs/swagger/
 
 ## Collection Postman
+
 Para poder testar as APIs foi criado neste diretorio: /AiqFome/Postman_collection/ um arquivo .json que pode ser importado na ferramenta Postman. Você pode baixar o Python [aqui](https://www.postman.com/downloads/).
 Nesta Colletion é possivel encontrar todos os Endpoints criados neste projeto e testa-los.
 
