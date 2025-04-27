@@ -1,241 +1,148 @@
 from django.urls import reverse
+from rest_framework.test import APITestCase
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
 from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Customer, FavoriteProduct
-import json
+from .models import Customer, Product, FavoriteProduct
 
 User = get_user_model()
 
-class TestSetup(APITestCase):
-    def setUp(self):
-        self.register_url = reverse('register')
-        self.token_url = reverse('token_obtain_pair')
-        
-        self.user_data = {
-            'username': 'testuser',
-            'password': 'testpass123'
-        }
-        self.user = User.objects.create_user(**self.user_data)
-        
-        response = self.client.post(
-            self.token_url,
-            self.user_data,
-            format='json'
-        )
-        self.token = response.data['access']
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
-        
-        self.Customer_data = {
-            'nome': 'Cliente Teste',
-            'email': 'Cliente@teste.com'
-        }
-        self.Customer = Customer.objects.create(**self.Customer_data)
-        
-        # URLs para os endpoints
-        self.Customers_url = reverse('Customer-list-create')
-        self.Customer_detail_url = reverse('Customer-detail', kwargs={'id': self.Customer.id})
-        
-        # Dados de produto favorito *mock*
-        self.produto_data = {
-            'product_id': 'prod123',
-            'title': 'Produto Teste',
-            'image': 'http://luzizLabs.com/produto.jpg',
-            'price': 99.99,
-            'review': 4.5
-        }
-        self.produto_favorito = FavoriteProduct.objects.create(
-            Customer=self.Customer,
-            **self.produto_data
-        )
-        self.favoritos_url = reverse('favorite-list', kwargs={'Customer_id': self.Customer.id})
-        self.favorito_detail_url = reverse(
-            'favorite-detail',
-            kwargs={
-                'Customer_id': self.Customer.id,
-                'product_id': self.produto_favorito.id
-            }
-        )
-        
-        # Configurar mock para API externa
-        self.patcher = None
-        
-    def tearDown(self):
-        if self.patcher:
-            self.patcher.stop()
-        super().tearDown()
-
-class AuthTests(TestSetup):
-    def test_registro_usuario(self):
+class UserTests(APITestCase):
+    
+    def test_user_registration(self):
+        url = reverse('register')
         data = {
-            'username': 'newuser',
-            'password': 'newpass123'
+            "username": "usuario",
+            "password": "senha123"
         }
-        response = self.client.post(self.register_url, data, format='json')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue('refresh' in response.data)
-        self.assertTrue('access' in response.data)
-    
-    def test_login_usuario(self):
-        response = self.client.post(self.token_url, self.user_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue('access' in response.data)
-    
-    def test_acesso_nao_autorizado(self):
-        client = APIClient()  # Client sem autenticação
-        response = client.get(self.Customers_url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('refresh', response.data)
+        self.assertIn('access', response.data)
 
-class CustomerModelTests(TestSetup):
-    def test_criacao_Customer(self):
-        Customer = Customer.objects.create(
-            nome='Novo Cliente',
-            email='novo@Cliente.com'
-        )
-        self.assertEqual(str(Customer), 'Novo Cliente (novo@Cliente.com)')
-        self.assertTrue(Customer.data_cadastro is not None)
-    
-    def test_email_unico(self):
-        with self.assertRaises(Exception):
-            Customer.objects.create(
-                nome='Cliente Duplicado',
-                email='Customer@teste.com'
-            )
-    
-    def test_validacao_email(self):
-        Customer = Customer(
-            nome='Cliente Inválido',
-            email='email-invalido'
-        )
-        with self.assertRaises(ValidationError):
-            Customer.full_clean()
-
-class FavoriteProductModelTests(TestSetup):
-    def test_criacao_produto_favorito(self):
-        produto = FavoriteProduct.objects.create(
-            Customer=self.Customer,
-            product_id='prod456',
-            titulo='Outro Produto',
-            imagem='http://teste.com/outro.jpg',
-            preco=50.00
-        )
-        self.assertEqual(str(produto), 'Outro Produto (R$ 50.00)')
-        self.assertTrue(produto.data_adicao is not None)
-    
-    def test_produto_unico_por_Customer(self):
-        with self.assertRaises(Exception):
-            FavoriteProduct.objects.create(
-                Customer=self.Customer,
-                product_id='prod123',  # Já existe para este cliente
-                titulo='Produto Duplicado',
-                imagem='http://teste.com/duplicado.jpg',
-                preco=10.00
-            )
-
-class CustomerViewTests(TestSetup):
-    def test_listar_Customers(self):
-        response = self.client.get(self.Customers_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['nome'], self.Customer_data['nome'])
-    
-    def test_criar_Customer(self):
+    def test_user_registration_invalid(self):
+        url = reverse('register')
         data = {
-            'nome': 'Novo Customer',
-            'email': 'novo@Customer.com'
+            "username": "usuario"
+            # Falta o campo de senha
         }
-        response = self.client.post(self.Customers_url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Customer.objects.count(), 2)
-    
-    def test_email_duplicado(self):
-        response = self.client.post(
-            self.Customers_url,
-            self.Customer_data,  # Email duplicado
-            format='json'
-        )
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertTrue('email' in response.data)
-    
-    def test_detalhes_Customer(self):
-        response = self.client.get(self.Customer_detail_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['nome'], self.Customer_data['nome'])
-    
-    def test_atualizar_Customer(self):
-        data = {'nome': 'Cliente Atualizado'}
-        response = self.client.patch(self.Customer_detail_url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.Customer.refresh_from_db()
-        self.assertEqual(self.Customer.nome, 'Cliente Atualizado')
-    
-    def test_deletar_Customer(self):
-        response = self.client.delete(self.Customer_detail_url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(Customer.objects.count(), 0)
 
-class FavoriteProductViewTests(TestSetup):
+class CustomerTests(APITestCase):
+
     def setUp(self):
-        super().setUp()
-        # Mock para a API externa de validação de produtos
-        from unittest.mock import patch
-        self.patcher = patch('requests.get')
-        self.mock_get = self.patcher.start()
-        
-        # Configurar o mock para retornar dados válidos
-        self.mock_get.return_value.status_code = 200
-        self.mock_get.return_value.json.return_value = {
-            'title': 'Produto Validado',
-            'image': 'http://luizalabs.com/validado.jpg',
-            'price': 150.00,
-            'review': 4.8
+        # Criando um usuário e um token de autenticação
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_authenticate(user=self.user)
+    
+    def test_create_customer(self):
+        url = reverse('customer-list')
+        data = {
+            "name": "Fernando Amorim",
+            "email": "fernando.amorim@gmail.com"
         }
-    
-    def test_listar_favoritos(self):
-        response = self.client.get(self.favoritos_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['title'], self.produto_data['title'])
-    
-    def test_criar_favorito(self):
-        data = {'product_id': 'prod789'}
-        response = self.client.post(self.favoritos_url, data, format='json')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(FavoriteProduct.objects.count(), 2)
-        
-        # Verifica se os dados foram preenchidos pela API externa
-        produto = FavoriteProduct.objects.get(product_id='prod789')
-        self.assertEqual(produto.titulo, 'Produto Validado')
-    
-    def test_produto_duplicado(self):
-        data = {'product_id': 'prod123'}  # Já existe
-        response = self.client.post(self.favoritos_url, data, format='json')
+        self.assertEqual(response.data['name'], data['name'])
+        self.assertEqual(response.data['email'], data['email'])
+
+    def test_create_customer_invalid_email(self):
+        url = reverse('customer-list')
+        data = {
+            "name": "Fernando Amorim",
+            "email": "invalid_email"
+        }
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertTrue('product_id' in response.data)
     
-    def test_produto_invalido(self):
-        # Configurar mock para retornar produto inválido
-        self.mock_get.return_value.status_code = 404
-        
-        data = {'product_id': 'prod-invalido'}
-        response = self.client.post(self.favoritos_url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertTrue('non_field_errors' in response.data)
-    
-    def test_detalhes_favorito(self):
-        response = self.client.get(self.favorito_detail_url)
+    def test_get_customers(self):
+        url = reverse('customer-list')
+        response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['title'], self.produto_data['title'])
+        self.assertTrue(len(response.data) > 0)
     
-    def test_atualizar_favorito(self):
-        data = {'review': 5.0}
-        response = self.client.patch(self.favorito_detail_url, data, format='json')
+    def test_update_customer(self):
+        customer = Customer.objects.create(name="Customer", email="customer@example.com")
+        url = reverse('customer-detail', args=[customer.id])
+        data = {
+            "name": "Updated Name",
+            "email": "updated@example.com"
+        }
+        response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.produto_favorito.refresh_from_db()
-        self.assertEqual(self.produto_favorito.review, 5.0)
+        self.assertEqual(response.data['name'], data['name'])
+        self.assertEqual(response.data['email'], data['email'])
     
-    def test_deletar_favorito(self):
-        response = self.client.delete(self.favorito_detail_url)
+    def test_delete_customer(self):
+        customer = Customer.objects.create(name="Customer", email="customer@example.com")
+        url = reverse('customer-detail', args=[customer.id])
+        response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(FavoriteProduct.objects.count(), 0)
+
+class FavoriteProductTests(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_authenticate(user=self.user)
+        self.customer = Customer.objects.create(name="Customer", email="customer@example.com")
+        self.product = Product.objects.create(
+            api_id=1, title="Product", price=10.99, description="Product description",
+            category="Category", image_url="http://example.com/image.jpg", 
+            rating_rate=4.5, rating_count=100
+        )
+    
+    def test_add_favorite_product(self):
+        url = reverse('favorite-product-list', kwargs={'Customer_id': self.customer.id})
+        data = {
+            "product_id": self.product.id
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['customer'], self.customer.id)
+        self.assertEqual(response.data['product_id'], self.product.id)
+
+    def test_add_favorite_product_duplicate(self):
+        FavoriteProduct.objects.create(customer=self.customer, product_id=self.product)
+        url = reverse('favorite-product-list', kwargs={'Customer_id': self.customer.id})
+        data = {
+            "product_id": self.product.id
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_favorite_products(self):
+        FavoriteProduct.objects.create(customer=self.customer, product_id=self.product)
+        url = reverse('favorite-product-list', kwargs={'Customer_id': self.customer.id})
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(len(response.data) > 0)
+
+    def test_remove_favorite_product(self):
+        favorite_product = FavoriteProduct.objects.create(customer=self.customer, product_id=self.product)
+        url = reverse('favorite-product-detail', kwargs={'customer_id': self.customer.id, 'product_id': self.product.id})
+        response = self.client.delete(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_get_favorite_product_detail(self):
+        favorite_product = FavoriteProduct.objects.create(customer=self.customer, product_id=self.product)
+        url = reverse('favorite-product-detail', kwargs={'customer_id': self.customer.id, 'product_id': self.product.id})
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['product_id'], self.product.id)
+
+class ProductImportTests(APITestCase):
+
+    def test_import_products(self):
+        url = reverse('import-products')
+        response = self.client.post(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('message', response.data)
+        self.assertIn('imported', response.data)
+        self.assertIn('skipped', response.data)
+    
+    def test_import_products_service_unavailable(self):
+        # Simulate an external service failure or make it unavailable
+        url = reverse('import-products')
+        with self.assertRaises(requests.exceptions.RequestException):
+            response = self.client.post(url, format='json')
+            self.assertEqual(response.status_code, status.HTTP_503_SERVICE_UNAVAILABLE)
